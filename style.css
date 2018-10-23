@@ -120,6 +120,14 @@ body {
     margin: 10px;
   }
 
+  .main-button.correct {
+    border: 5px solid green;
+  }
+
+  .main-button.incorrect {
+    border: 5px solid rgb(116, 3, 3);
+  }
+
   .btn1 {
     background-color: #ce1a1a;
     background-size: cover;
@@ -134,4 +142,9 @@ body {
   .btn3 {
     background-color: yellow;
 
+  }
+
+  #screen-text {
+    color: green;
+    text-align: center;
   }

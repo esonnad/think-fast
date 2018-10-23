@@ -6,10 +6,11 @@ class Card {
 }
 
 class Level {
-  constructor(cards, maxSequenceLength, sequenceSpeed) {
+  constructor(cards, maxSequenceLength, sequenceSpeed, pointsToAdvance) {
     this.cards = cards;
     this.maxSequenceLength = maxSequenceLength;
     this.sequenceSpeed = sequenceSpeed;
+    this.pointsToAdvance = pointsToAdvance;
   }
 }
 
@@ -21,15 +22,19 @@ class Game {
     this.timeLeft = 100;
     this.cards = [];
     this.currentSequence = []
+    this.sequenceCopy = []
     this.sequencePointValue = 0;
     this.maxSequenceLength = 0;
     this.sequenceSpeed = 0;
+    this.active = false;
+    this.pointsToAdvance;
   }
 
   generateLevel(level) {
     this.cards = level.cards;
     this.maxSequenceLength = level.maxSequenceLength;
     this.sequenceSpeed = level.sequenceSpeed;
+    this.pointsToAdvance = level.pointsToAdvance;
   }
 
   startGame() {
@@ -69,14 +74,12 @@ class Game {
       this.currentSequence.push(nextCard);
     }
     this.sequencePointValue = this.currentSequence.length;
+    this.sequenceCopy = this.currentSequence.slice();
   }
 
-  // displaySequence(pm) {
 
-  // }
-
-  checkClick(button) {
-    if (button.key == this.currentSequence[0].key) {
+  checkClick(key) {
+    if (key == this.currentSequence[0].key) {
       this.currentSequence.shift();
       return true;
     } 
