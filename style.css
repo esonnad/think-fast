@@ -1,0 +1,138 @@
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 350px;
+  height: 250px;
+  border: 5px solid black;
+  background-color: papayawhip;
+  border-radius: 10px;
+
+}
+
+.top {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+  height: 150px;
+  margin-top: 15px;
+
+}
+
+.bottom {
+  width: 100%;
+  height: 75px;
+
+}
+
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  border: 5px solid black;
+  border-radius: 10px;
+  width: 200px;
+  margin-top: 15px;
+  justify-self: center;
+  background-color: aqua;
+}
+
+.screen.dark {
+  background-color: black;
+}
+
+#start {
+  position: relative;
+  top: 50px;
+  left: 75px;
+  width:  50px;
+  border-radius: 5px;
+}
+
+.screen-top {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100px;
+}
+
+.screen-bottom {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 20px;
+  font-size: 10px;
+}
+
+.side-buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  margin: 15px 10px 0px 10px;
+}
+
+.bottom {
+  display: flex;
+  justify-content: center;
+}
+
+.position {
+  width: 50px;
+  height: 50px;
+  margin: 10px;
+  border: 1px solid black;
+  border-radius: 5px;
+  background-position: center;
+}
+
+.p1.active {
+  border: 5px solid red;
+}
+
+.p2.active {
+  border: 5px solid blue;
+}
+
+.p3.active {
+  border: 5px solid yellow;
+}
+
+.btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  margin-top: 10px;
+  border: 2px solid black;
+  display: flex;
+  justify-content: center;
+  }
+
+  .btn1, .btn2, .btn3 {
+    margin: 10px;
+  }
+
+  .btn1 {
+    background-color: #ce1a1a;
+    background-size: cover;
+    background-position: center;
+
+  }
+
+  .btn2 {
+    background-color: #0247f4;
+  }
+
+  .btn3 {
+    background-color: yellow;
+
+  }
