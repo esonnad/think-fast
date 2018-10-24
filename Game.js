@@ -61,9 +61,6 @@ class Game {
     }
   }
 
-  // displayKeys() {
-
-  // }
 
   generateSequence() {
     this.currentSequence = [];
