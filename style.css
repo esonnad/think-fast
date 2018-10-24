@@ -12,7 +12,7 @@ body {
   width: 350px;
   height: 250px;
   border: 5px solid black;
-  background-color: papayawhip;
+  background-color: palevioletred;
   border-radius: 10px;
 
 }
@@ -52,6 +52,14 @@ body {
 #start {
   position: relative;
   top: 50px;
+  left: 75px;
+  width:  50px;
+  border-radius: 5px;
+}
+
+#tutorial {
+  position: relative;
+  top: 40px;
   left: 75px;
   width:  50px;
   border-radius: 5px;
@@ -121,7 +129,7 @@ body {
   }
 
   .main-button.correct {
-    border: 5px solid green;
+    border: 5px solid lime;
   }
 
   .main-button.incorrect {
@@ -145,6 +153,6 @@ body {
   }
 
   #screen-text {
-    color: green;
+    color: black;
     text-align: center;
   }

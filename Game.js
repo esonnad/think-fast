@@ -108,7 +108,10 @@ class Game {
   }
 
   endGame() {
-
+    this.active = false;
+    this.cards = [];
+    this.currentSequence = []
+    this.sequenceCopy = []
   }
 }
 

@@ -1,11 +1,12 @@
 class Timer {
-  constructor(time) {
-    this.timeLeft = time;
+  constructor() {
+    this.timeLeft;
     this.intervalId = 0;
     this.timeDisplay = "00";
   }
 
-  start() {
+  start(time) {
+    this.timeLeft = time;
     this.intervalId = setInterval(() => {
       this.timeLeft--;
       this.setTime();
