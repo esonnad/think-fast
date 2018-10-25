@@ -1,12 +1,14 @@
 $( document ).ready(function() {
 
 //----------PREPARE GAME-------------//
-
+var circle = "./images/black-circle.png"
+var square = "./images/black-square.png"
+var triangle = "./images/black-triangle.png"
 
 var levels = []
-var card1 = new Card("https://github.com/esonnad/think-fast/blob/master/images/black-circle.png")
-var card2 = new Card("https://github.com/esonnad/think-fast/blob/master/images/black-square.png")
-var card3 = new Card("https://github.com/esonnad/think-fast/blob/master/images/black-triangle.png")
+var card1 = new Card(circle)
+var card2 = new Card(square)
+var card3 = new Card(triangle)
 
 var level1Cards = [card1, card2, card3];
 var level1 = new Level(level1Cards, 1, 1000, 5); 
