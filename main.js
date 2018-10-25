@@ -9,7 +9,7 @@ var card2 = new Card("../images/black-square.png")
 var card3 = new Card("../images/black-triangle.png")
 
 var level1Cards = [card1, card2, card3];
-var level1 = new Level(level1Cards, 1, 1000, 5);
+var level1 = new Level(level1Cards, 1, 1000, 5); 
 var level2 = new Level(level1Cards, 2, 1000, 10);
 var level3 = new Level(level1Cards, 5, 1000, 10);
 
@@ -23,6 +23,8 @@ var game = new Game(levels);
 var timer = new Timer();
 
 var tutorialMode = false;
+var keyTutorialMode = false;
+var repeatTutorialMode = false;
 
 $('#screen-text').hide();
 
@@ -42,7 +44,7 @@ $('#start').click(function() {
 });
 
 function displayTime() {
-  $('.time').text("Time: " + timer.timeDisplay);
+  $('.time').text("Time: 00:" + timer.timeDisplay);
 }
 
 function displayKey() {
@@ -83,23 +85,37 @@ function displaySequenceCallback(currentCard, delay) {setTimeout(() => {
 
 function displaySequence(sequence) {
   game.active = false;
+  tutorial.active = false;
   var delay = 0;
   var currentCard;
   for (let i = 0; i < sequence.length; i++) {
     currentCard = sequence[i];
     delay += 2000; 
     displaySequenceCallback(currentCard,delay)
+    if (i == sequence.length-1) setTimeout(function() {
+      tutorial.active = true
+      console.log("set tutorial to active")
+    }, delay);
 
   }
   game.active = true;
 }
 
 $('.key-button').click(function() {
-  displayKey(); 
+  if (tutorialMode == false) displayKey(); 
+  else { 
+  displayKeyTutorial();
+  }
 });
 
 $('.repeat-button').click(function() {
-  displaySequence(game.sequenceCopy); 
+  if (tutorialMode == false) displaySequence(game.sequenceCopy); 
+  else if (repeatTutorialMode == true) {
+    console.log("longExampleCount", longExampleCount);
+    tutorial.currentSequence = [card1, card1, card3, card2]
+    displaySequence(tutorial.currentSequence);
+    $('#screen-text').text("Here is that sequence again");
+  }
 });
 
 //Normal game behavior
@@ -143,12 +159,12 @@ $('.main-button').click(function() {
         setTimeout(function() {
           displaySequence(tutorial.currentSequence);
         }, 500);
-        tutorial.active = true; // you can continue 
+        //tutorial.active = true; // you can continue 
         singleExampleCount++;
       }
       if (singleExampleCount === 3) { //we need to transition into long examples
         setTimeout(function() {
-          $('#screen-text').text("Let's try a longer sequence");
+          $('#screen-text').text("Let's try a longer sequence. Wait until it has finished.");
         }, 3000);
         tutorial.currentSequence = []
         singleExampleCount++;
@@ -158,7 +174,7 @@ $('.main-button').click(function() {
         }, 4000);
         setTimeout(function() {
           $('#screen-text').text("");
-          tutorial.active = true
+          //tutorial.active = true
         }, 11000);
         
       }
@@ -172,7 +188,7 @@ $('.main-button').click(function() {
           longExampleCount++;
           tutorial.currentSequence = longSequences[longExampleCount]; //sequence updates
           displaySequence(tutorial.currentSequence);
-          tutorial.active = true;
+          //tutorial.active = true;
         }
         else { //still working on a sequence
           tutorial.currentSequence.shift(); // removes the one you got right from the sequence 
@@ -181,9 +197,14 @@ $('.main-button').click(function() {
       }
 
       else if (longExampleCount === 2) {
+        $('.position').hide();
         setTimeout(function() {
-          $('#screen-text').text("Forgot the key? Ask for a hint");
+          $('#screen-text').text("That's enough. Press the hint button");
+          keyTutorialMode = true;
+          longExampleCount++
       }, 2000 )};
+
+      
     }
 
     else { // button was incorrect
@@ -205,6 +226,7 @@ function update() {
   $('.score').text("Score: " + game.score)
   if (game.score >= game.pointsToAdvance) {
     game.levelUp();
+    timer.stop();
     timer.start(25);
     $('.level').text("Level: " + game.currentLevel);
   }
@@ -238,13 +260,29 @@ tutorial.generateLevel(tutorialLevel)
 
 function displayKeyTutorial() {
   tutorial.active = false;
+  $('.position').show();
   $('.position').addClass("active");
   for (var i = 0; i < tutorial.cards.length; i++) {
     var card = tutorial.cards[i];
     $('.p' + card.key).css("background-image", "url(" + card.img + ")");
   }
-}
+  setTimeout(function() {
+    $('.position').removeClass("active");
+    $('.position').hide();
+  }, 2000);
 
+  if (keyTutorialMode == true) {
+    $('#screen-text').text("In case you forgot");
+    repeatTutorialMode = true;
+    setTimeout(function() {
+      $('#screen-text').text("Now press the repeat button");
+    }, 2000);
+
+  }
+
+  else tutorial.active = true;
+  //keyTutorialMode = false;
+}
 
 
 $('#tutorial').click(function() {
@@ -270,9 +308,9 @@ $('#tutorial').click(function() {
     displaySequence(tutorial.currentSequence);
   }, 8000); 
   setTimeout(function() {
-    $('#screen-text').text("Select the correct button");
+    $('#screen-text').text("Push the correct button");
     game.active = false;
-    tutorial.active = true;
+    //tutorial.active = true;
   }, 12000); 
 
 
