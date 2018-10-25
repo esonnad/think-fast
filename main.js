@@ -1,9 +1,9 @@
 $( document ).ready(function() {
-  
+
+//----------PREPARE GAME-------------//
 
 
 var levels = []
-
 var card1 = new Card("../images/black-circle.png")
 var card2 = new Card("../images/black-square.png")
 var card3 = new Card("../images/black-triangle.png")
@@ -13,20 +13,47 @@ var level1 = new Level(level1Cards, 1, 1000, 5);
 var level2 = new Level(level1Cards, 2, 1000, 10);
 var level3 = new Level(level1Cards, 5, 1000, 10);
 
-
-
 levels.push(level1);
 levels.push(level2);
 levels.push(level3);
 
 var game = new Game(levels);
+
+//set default modes
+var tutorialMode = false; //activates tutorial 
+var keyTutorialMode = false; //activates tutorial key button function
+var repeatTutorialMode = false; //activates tutorial repeat button function
+$('#screen-text').hide();
+
+
+
+//----------PREPARE TUTORIAL-------------//
+
+
+var tutorialLevel = new Level(level1Cards, 1, 1000, 5);
+var tutorial = new Game([tutorialLevel]);
+var singleExampleCount = 0;
+var longExampleCount = 0;
+var correctResponse = ["Correct. Again.", "Correct. One more time.", "Ok that's enough"];
+var correctResponseLong = ["Correct", "Good job"];
+var longSequences =[[card1, card2, card1],[card2, card3, card1],[card1, card1, card3, card2]];
+tutorial.generateLevel(tutorialLevel)
+
+
+//----------PREPARE TIMER----------------//
+
+
 var timer = new Timer();
 
-var tutorialMode = false;
-var keyTutorialMode = false;
-var repeatTutorialMode = false;
 
-$('#screen-text').hide();
+//---------------------------------------//
+//---------------------------------------//
+//----------BUTTON FUNCTIONS-------------//
+//---------------------------------------//
+//---------------------------------------//
+
+
+//----------START BUTTON----------------//
 
 $('#start').click(function() {
   $(this).hide();
@@ -43,63 +70,8 @@ $('#start').click(function() {
   }, 1000)
 });
 
-function displayTime() {
-  $('.time').text("Time: 00:" + timer.timeDisplay);
-}
+//-------------KEY BUTTON----------------//
 
-function displayKey() {
-  game.active = false;
-  $('.position').addClass("active");
-  for (var i = 0; i < game.cards.length; i++) {
-    var card = game.cards[i];
-    $('.p' + card.key).css("background-image", "url(" + card.img + ")");
-  }  
-  setTimeout(function() {
-    hideKey();
-    displaySequence(game.currentSequence);
-  }, 3000); 
-}
-
-function hideCards() {
-  $('.position').css("background-image", "none");
-}
-
-function hideKey() {
-  $('.position').removeClass("active");
-  hideCards();
-}
-
-function displayCard(card) {
-  var position = Math.floor(Math.random()*3) + 1;
-  $('.p' + position).show();
-  $('.p' + position).css("background-image", "url(" + card.img + ")");
-  setTimeout(function() {hideCards()}, 1000); 
-
-}
-
-
-function displaySequenceCallback(currentCard, delay) {setTimeout(() => {
-      displayCard(currentCard);
-      }, delay);
-    }
-
-function displaySequence(sequence) {
-  game.active = false;
-  tutorial.active = false;
-  var delay = 0;
-  var currentCard;
-  for (let i = 0; i < sequence.length; i++) {
-    currentCard = sequence[i];
-    delay += 2000; 
-    displaySequenceCallback(currentCard,delay)
-    if (i == sequence.length-1) setTimeout(function() {
-      tutorial.active = true
-      console.log("set tutorial to active")
-    }, delay);
-
-  }
-  game.active = true;
-}
 
 $('.key-button').click(function() {
   if (tutorialMode == false) displayKey(); 
@@ -108,15 +80,60 @@ $('.key-button').click(function() {
   }
 });
 
+//------------REPEAT BUTTON--------------//
+
 $('.repeat-button').click(function() {
   if (tutorialMode == false) displaySequence(game.sequenceCopy); 
   else if (repeatTutorialMode == true) {
-    console.log("longExampleCount", longExampleCount);
     tutorial.currentSequence = [card1, card1, card3, card2]
     displaySequence(tutorial.currentSequence);
     $('#screen-text').text("Here is that sequence again");
+    timer.start(25);
+    $('.time').show()
+    timeUpdate =setInterval(function() {
+      displayTime()
+      if (timer.timeLeft <= 0) {
+        endTutorial();
+      }
+    }, 1000)
+    repeatTutorialMode = false;
   }
 });
+
+//------------TUTORIAL BUTTON--------------//
+
+
+$('#tutorial').click(function() {
+  tutorialMode = true;
+  $(this).hide();
+  $('#start').hide();
+  $('.text').hide();
+  $('.screen').removeClass("dark");
+  tutorial.assignKeys();
+  setTimeout(function() {
+    $('#screen-text').css("font-size", "12px");
+    $('#screen-text').text("Study the key:");
+    $('#screen-text').show();
+  }, 500); 
+  setTimeout(function() {
+    $('#screen-text').text("Each symbol corresponds to a color.");
+  }, 4000); 
+  setTimeout(function() {displayKeyTutorial()}, 2000); 
+  setTimeout(function() {hideKey()}, 8000); 
+  setTimeout(function() {
+    $('#screen-text').text("Now watch:");
+    tutorial.generateSequence();
+    displaySequence(tutorial.currentSequence);
+  }, 8000); 
+  setTimeout(function() {
+    $('#screen-text').text("Push the correct button");
+    game.active = false;
+    //tutorial.active = true;
+  }, 12000); 
+});
+
+//------------MAIN BUTTONS: A NOVEL BY EMINA SONNAD--------------//
+
 
 //Normal game behavior
 $('.main-button').click(function() {
@@ -142,7 +159,7 @@ $('.main-button').click(function() {
       }          
   } //end of game mode behavior 
   
-  else if (tutorial.active == true) { //"Tutorial behavior" a novel by Emina Sonnad
+  else if (tutorial.active == true) { //Tutorial behavior
   tutorial.active = false; //you can't click again 
   if ($(this).attr('id') == tutorial.currentSequence[0].key) { //if the button clicked is correct
       $(this).addClass("correct");
@@ -174,39 +191,48 @@ $('.main-button').click(function() {
         }, 4000);
         setTimeout(function() {
           $('#screen-text').text("");
-          //tutorial.active = true
         }, 11000);
-        
       }
-
-      else if ((longExampleCount < 2) && (singleExampleCount > 3)) { // we're on the long examples
-        if (tutorial.currentSequence.length === 1) { // you just finished a sequence
-          $('#screen-text').text(correctResponseLong[longExampleCount]);
-          setTimeout(function() {
-            $('#screen-text').text("");
-          }, 1000);
-          longExampleCount++;
-          tutorial.currentSequence = longSequences[longExampleCount]; //sequence updates
-          displaySequence(tutorial.currentSequence);
-          //tutorial.active = true;
+      else if ((longExampleCount <= 3) && (singleExampleCount > 3)) { // we're on the long examples
+        if (tutorial.currentSequence.length === 1) {
+          if (longExampleCount === 2) {
+            $('.position').hide();
+            setTimeout(function() {
+              $('#screen-text').text("That's enough. Press the hint button");
+              keyTutorialMode = true;
+              longExampleCount++
+          }, 2000 )}
+          else if (longExampleCount === 3) {
+            $('.position').hide();
+            setTimeout(function() {
+              $('#screen-text').text("You're doing great");
+              longExampleCount++
+            }, 2000 )
+            setTimeout(function() {
+              $('#screen-text').text("But in case you didn't notice...");
+              longExampleCount++
+            }, 5000 )
+            setTimeout(function() {
+              $('#screen-text').text("we're running out of time");
+              longExampleCount++
+            }, 8000 )
+          }
+          else  {// you just finished a sequence
+            $('#screen-text').text(correctResponseLong[longExampleCount]);
+            setTimeout(function() {
+              $('#screen-text').text("");
+            }, 1000);
+            longExampleCount++;
+            tutorial.currentSequence = longSequences[longExampleCount]; //sequence updates
+            displaySequence(tutorial.currentSequence);
+          }        
         }
         else { //still working on a sequence
           tutorial.currentSequence.shift(); // removes the one you got right from the sequence 
           tutorial.active = true;
         }
-      }
-
-      else if (longExampleCount === 2) {
-        $('.position').hide();
-        setTimeout(function() {
-          $('#screen-text').text("That's enough. Press the hint button");
-          keyTutorialMode = true;
-          longExampleCount++
-      }, 2000 )};
-
-      
+      }    
     }
-
     else { // button was incorrect
       $('#screen-text').text("No");
       $(this).addClass("incorrect");
@@ -219,8 +245,77 @@ $('.main-button').click(function() {
     }
   } // end of tutorial behavior 
 
-
 }); //end of main button function
+
+
+
+//------------GENERIC FUNCTIONS---------------//
+
+
+function displayTime() {
+  $('.time').text("Time: 00:" + timer.timeDisplay);
+}
+
+
+function hideCards() {
+  $('.position').css("background-image", "none");
+}
+
+
+function hideKey() {
+  $('.position').removeClass("active");
+  hideCards();
+}
+
+
+function displaySequenceCallback(currentCard, delay) {setTimeout(() => {
+  displayCard(currentCard);
+  }, delay);
+}
+
+
+function displaySequence(sequence) {
+  game.active = false; //disables clicking buttons while sequence is showing 
+  tutorial.active = false;
+  var delay = 0;
+  var currentCard;
+  for (let i = 0; i < sequence.length; i++) {
+    currentCard = sequence[i];
+    delay += 2000; 
+    displaySequenceCallback(currentCard,delay)
+    if (i == sequence.length-1) setTimeout(function() {
+      tutorial.active = true
+      }, delay);
+  } 
+  game.active = true; //reenables clicking buttons 
+}
+
+
+function displayCard(card) {
+  var position = Math.floor(Math.random()*3) + 1;
+  $('.p' + position).show();
+  $('.p' + position).css("background-image", "url(" + card.img + ")");
+  setTimeout(function() {hideCards()}, 1000); 
+
+}
+
+
+//------------GAME SPECIFIC FUNCTIONS---------------//
+
+
+function displayKey() {
+  game.active = false;
+  $('.position').addClass("active");
+  for (var i = 0; i < game.cards.length; i++) {
+    var card = game.cards[i];
+    $('.p' + card.key).css("background-image", "url(" + card.img + ")");
+  }  
+  setTimeout(function() {
+    hideKey();
+    displaySequence(game.currentSequence);
+  }, 3000); 
+}
+
 
 function update() {
   $('.score').text("Score: " + game.score)
@@ -239,27 +334,12 @@ function gameOver() {
 }
 
 
-//-------------------------------//
-//-------------------------------//
-//-----------TUTORIAL------------//
-//-------------------------------//
-//-------------------------------//
+//------------TUTORIAL SPECIFIC FUNCTIONS---------------//
 
 
-
-var tutorialLevel = new Level(level1Cards, 1, 1000, 5);
-
-var tutorial = new Game([tutorialLevel]);
-
-var singleExampleCount = 0;
-var longExampleCount = 0;
-var correctResponse = ["Correct. Again.", "Correct. One more time.", "Ok that's enough"];
-var correctResponseLong = ["Correct", "Good job"];
-var longSequences =[[card1, card2, card1],[card2, card3, card1],[card1, card1, card3, card2]];
-tutorial.generateLevel(tutorialLevel)
 
 function displayKeyTutorial() {
-  tutorial.active = false;
+  tutorial.active = false; //disables clicking buttons
   $('.position').show();
   $('.position').addClass("active");
   for (var i = 0; i < tutorial.cards.length; i++) {
@@ -271,53 +351,19 @@ function displayKeyTutorial() {
     $('.position').hide();
   }, 2000);
 
-  if (keyTutorialMode == true) {
+  if (keyTutorialMode == true) { //this is the first time pressing key button
     $('#screen-text').text("In case you forgot");
     repeatTutorialMode = true;
     setTimeout(function() {
       $('#screen-text').text("Now press the repeat button");
     }, 2000);
-
   }
-
-  else tutorial.active = true;
-  //keyTutorialMode = false;
+  else tutorial.active = true; //reenables clicking buttons 
+  keyTutorialMode = false; //prevents key-->repeat sequence from being triggered more than once
 }
 
 
-$('#tutorial').click(function() {
-  tutorialMode = true;
-  $(this).hide();
-  $('#start').hide();
-  $('.text').hide();
-  $('.screen').removeClass("dark");
-  tutorial.assignKeys();
-  setTimeout(function() {
-    $('#screen-text').css("font-size", "12px");
-    $('#screen-text').text("Study the key:");
-    $('#screen-text').show();
-  }, 500); 
-  setTimeout(function() {
-    $('#screen-text').text("Each symbol corresponds to a color.");
-  }, 4000); 
-  setTimeout(function() {displayKeyTutorial()}, 2000); 
-  setTimeout(function() {hideKey()}, 8000); 
-  setTimeout(function() {
-    $('#screen-text').text("Now watch:");
-    tutorial.generateSequence();
-    displaySequence(tutorial.currentSequence);
-  }, 8000); 
-  setTimeout(function() {
-    $('#screen-text').text("Push the correct button");
-    game.active = false;
-    //tutorial.active = true;
-  }, 12000); 
-
-
-
-
-});
-
+//-----------------THE END-----------------//
 
 
 });

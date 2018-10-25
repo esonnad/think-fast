@@ -109,6 +109,7 @@ class Game {
     this.cards = [];
     this.currentSequence = []
     this.sequenceCopy = []
+    this.levels = []
   }
 }
 
