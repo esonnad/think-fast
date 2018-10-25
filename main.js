@@ -4,9 +4,9 @@ $( document ).ready(function() {
 
 
 var levels = []
-var card1 = new Card("../images/black-circle.png")
-var card2 = new Card("../images/black-square.png")
-var card3 = new Card("../images/black-triangle.png")
+var card1 = new Card("https://github.com/esonnad/think-fast/blob/master/images/black-circle.png")
+var card2 = new Card("https://github.com/esonnad/think-fast/blob/master/images/black-square.png")
+var card3 = new Card("https://github.com/esonnad/think-fast/blob/master/images/black-triangle.png")
 
 var level1Cards = [card1, card2, card3];
 var level1 = new Level(level1Cards, 1, 1000, 5); 
@@ -83,8 +83,8 @@ $('.key-button').click(function() {
 //------------REPEAT BUTTON--------------//
 
 $('.repeat-button').click(function() {
-  if (tutorialMode == false) displaySequence(game.sequenceCopy); 
-  else if (repeatTutorialMode == true) {
+  if (!tutorialMode) displaySequence(game.sequenceCopy); 
+  else if (repeatTutorialMode) {
     tutorial.currentSequence = [card1, card1, card3, card2]
     displaySequence(tutorial.currentSequence);
     $('#screen-text').text("Here is that sequence again");
@@ -360,6 +360,13 @@ function displayKeyTutorial() {
   }
   else tutorial.active = true; //reenables clicking buttons 
   keyTutorialMode = false; //prevents key-->repeat sequence from being triggered more than once
+}
+
+function endTutorial() {
+  timer.stop();
+  tutorialMode = false;
+  tutorial.endGame();
+  $('.screen').addClass("dark");
 }
 
 
