@@ -114,7 +114,7 @@ $('#tutorial').click(function() {
   tutorial.assignKeys();
   setTimeout(function() {
     $('#screen-text').css("font-size", "12px");
-    $('#screen-text').text("Study the key:");
+    $('#screen-text').text("Here is the key:");
     $('#screen-text').show();
   }, 500); 
   setTimeout(function() {
@@ -351,14 +351,14 @@ function displayKeyTutorial() {
   setTimeout(function() {
     $('.position').removeClass("active");
     $('.position').hide();
-  }, 2000);
+  }, 5000);
 
   if (keyTutorialMode == true) { //this is the first time pressing key button
     $('#screen-text').text("In case you forgot");
     repeatTutorialMode = true;
     setTimeout(function() {
       $('#screen-text').text("Now press the repeat button");
-    }, 2000);
+    }, 5000);
   }
   else tutorial.active = true; //reenables clicking buttons 
   keyTutorialMode = false; //prevents key-->repeat sequence from being triggered more than once
