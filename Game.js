@@ -17,7 +17,7 @@ class Level {
 class Game {
   constructor(levels) {
     this.levels = levels;
-    this.currentLevel = 0;
+    this.currentLevel = 1;
     this.score = 0
     this.timeLeft = 100;
     this.cards = [];
@@ -38,7 +38,7 @@ class Game {
   }
 
   startGame() {
-    this.generateLevel(this.levels[this.currentLevel])
+    this.generateLevel(this.levels[this.currentLevel - 1])
     this.assignKeys()
     this.generateSequence()
   }
@@ -104,12 +104,12 @@ class Game {
     this.generateLevel(this.levels[this.currentLevel]);
   }
 
-  endGame() {
-    this.active = false;
-    this.cards = [];
-    this.currentSequence = []
-    this.sequenceCopy = []
-    this.levels = []
-  }
+  // endGame() {
+  //   this.active = false;
+  //   this.cards = [];
+  //   this.currentSequence = []
+  //   this.sequenceCopy = []
+  //   this.levels = []
+  // }
 }
 

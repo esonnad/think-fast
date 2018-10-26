@@ -63,11 +63,12 @@ $('#start').click(function() {
   $('.screen').removeClass("dark");
   game.startGame();
   setTimeout(function() {displayKey()}, 1000); 
-  timer.start(25);
+  timer.start(20);
   timeUpdate =setInterval(function() {
     displayTime()
-    if (timer.timeLeft <= 0) {
+    if (timer.timeLeft < 0) {
       gameOver();
+      timer.timeLeft = 0;
     }
   }, 1000)
 });
@@ -330,9 +331,14 @@ function update() {
 }
 
 function gameOver() {
+  console.log("Game has ended")
   timer.stop()
   $('.screen').addClass("dark");
-  game.endGame();
+  $('#start').show();
+  $('#tutorial').show();
+  game = new Game(game.levels);
+  game.score = 0;
+  timer = new Timer();
 }
 
 
@@ -367,8 +373,15 @@ function displayKeyTutorial() {
 function endTutorial() {
   timer.stop();
   tutorialMode = false;
-  tutorial.endGame();
   $('.screen').addClass("dark");
+  $('#tutorial').show();
+  $('#start').show();
+  $('.position').hide();
+  tutorialMode = false; //activates tutorial 
+  keyTutorialMode = false; //activates tutorial key button function
+  repeatTutorialMode = false; //activates tutorial repeat button function
+  $('#screen-text').hide();
+
 }
 
 
